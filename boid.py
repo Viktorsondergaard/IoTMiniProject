@@ -8,6 +8,7 @@ Created on Mon Nov 30 10:26:59 2020
 
 import vector
 import numpy as np
+import matplotlib.pyplot as plt
 
 class boid:
     
@@ -15,7 +16,8 @@ class boid:
         self.position = vector.Vector(x,y)
         vec = (np.random.rand(2) - 0.5)*10
         self.velocity = vector.Vector(*vec)
-              
+
+# http://www.vergenet.net/~conrad/boids/pseudocode.html              
 def rule1(boid):
     
     pcj = vector.Vector(1,1)
@@ -58,20 +60,30 @@ def move_all_boids_to_new_positions(boids):
         b.velocity = b.velocity + v1 + v2 + v3
         b.position = b.position + b.velocity
         
+def draw_boids(boids):
+    list_of_boid_x, list_of_boid_y = [], []
+    axes = plt.gca()
+    axes.set_xlim([-5000,5000])
+    axes.set_ylim([-5000,5000])
+    for boid in boids:
+        list_of_boid_x.append(boid.position.x)
+        list_of_boid_y.append(boid.position.y)
 
-flock = [boid(*np.random.rand(2)*1000) for _ in range(2)]
+    plt.scatter(list_of_boid_x, list_of_boid_y)
+    plt.show()
+
+
+
+flock = [boid(*np.random.rand(2)*1000) for _ in range(100)]
 
 x = 0
-number = 5
+number = 50
 
 while x < number:
     move_all_boids_to_new_positions(flock)
-    for boid in flock:
-        print("boid x position = " + str(boid.position.x))
-        print("boid y position = " + str(boid.position.y))
-        print("boid x velocity = " + str(boid.velocity.x))
-        print("boid y velocity = " + str(boid.velocity.y))
     x += 1
-
+    draw_boids(flock)
+    
+    
 
 
