@@ -50,19 +50,19 @@ def rule3(boid):
 
 def bound_position(boid):
     V = vector.Vector(0,0)
-    if boid.position.x < -3000:
+    if boid.position.x < 0:
         V.x = 10
     elif boid.position.x > 3000:
         V.x = -10
         
-    if boid.position.y < -3000:
+    if boid.position.y < -0:
         V.y = 10        
     elif boid.position.y > 3000:
         V.y = -10 
     return V
     
 def tend_to_position(boid):
-    place = vector.Vector(2000,2000)
+    place = vector.Vector(500,500)
     return ((place - boid.position) / 100)           
                 
 def move_all_boids_to_new_positions(boids):    
@@ -90,7 +90,7 @@ def draw_boids(boids):
 
 
 
-flock = [boid(*np.random.rand(2)*1000) for _ in range(30)]
+flock = [boid(0,0) for _ in range(30)]
 
 x = 0
 number = 500
