@@ -33,7 +33,7 @@ def rule2(boid):
     c = vector.Vector(0,0)    
     for b in flock:
         if b != boid:
-            if ((abs(b.position - boid.position)) < 100):
+            if ((abs(b.position - boid.position)) < 10):
                 c = c - (b.position - boid.position)                 
     return c
 
@@ -52,34 +52,43 @@ def bound_position(boid):
     V = vector.Vector(0,0)
     if boid.position.x < 0:
         V.x = 10
-    elif boid.position.x > 3000:
+    elif boid.position.x > 1000:
         V.x = -10
         
     if boid.position.y < -0:
         V.y = 10        
-    elif boid.position.y > 3000:
+    elif boid.position.y > 1000:
         V.y = -10 
     return V
     
-def tend_to_position(boid):
-    place = vector.Vector(500,500)
-    return ((place - boid.position) / 100)           
+def tend_to_position(boid,number): 
+    place = vector.Vector(900,900)
+    if number > 100:
+        place = vector.Vector(200,200)
+    return ((place - boid.position) / 100)   
+
+def limit_velority(boid):
+    velocity_limit = 25
+    if (abs(boid.velocity) > velocity_limit):
+        boid.velocity = ((boid.velocity / abs(boid.velocity)) / velocity_limit)
+        
                 
-def move_all_boids_to_new_positions(boids):    
+def move_all_boids_to_new_positions(boids, number):    
     for b in boids:
         v1 = rule1(b)
         v2 = rule2(b)
         v3 = rule3(b)
         v4 = bound_position(b)
-        v5 = tend_to_position(b)        
+        v5 = tend_to_position(b, number)        
         b.velocity = b.velocity + v1 + v2 + v3 + v4 + v5
+        limit_velority(b)
         b.position = b.position + b.velocity
         
 def draw_boids(boids):
     list_of_boid_x, list_of_boid_y = [], []
     axes = plt.gca()
-    axes.set_xlim([-5000,5000])
-    axes.set_ylim([-5000,5000])
+    axes.set_xlim([0,1500])
+    axes.set_ylim([0,1500])
     for boid in boids:
         list_of_boid_x.append(boid.position.x)
         list_of_boid_y.append(boid.position.y)
@@ -88,15 +97,15 @@ def draw_boids(boids):
     plt.pause(0.1)
     plt.show()
 
+import random
 
-
-flock = [boid(0,0) for _ in range(30)]
+flock = [boid(random.randint(0,1500),random.randint(0,1500)) for _ in range(30)]
 
 x = 0
 number = 500
 
 while x < number:
-    move_all_boids_to_new_positions(flock)
+    move_all_boids_to_new_positions(flock, x)
     x += 1
     draw_boids(flock)
     
