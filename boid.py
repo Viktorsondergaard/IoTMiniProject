@@ -99,7 +99,7 @@ def draw_boids(boids):
 
 import random
 
-flock = [boid(random.randint(0,1500),random.randint(0,1500)) for _ in range(30)]
+flock = [boid(random.randint(0,640), random.randint(0,360)) for _ in range(10)]
 
 x = 0
 number = 500
@@ -107,7 +107,7 @@ number = 500
 while x < number:
     move_all_boids_to_new_positions(flock, x)
     x += 1
-    draw_boids(flock)
+    #draw_boids(flock)
     
     
 
