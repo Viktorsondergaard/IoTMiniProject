@@ -97,9 +97,9 @@ def tend_to_position(boid,number):
     return ((place - boid.position) / 100)   
 
 def limit_velority(boid):
-    velocity_limit = 25
+    velocity_limit = 10
     if (abs(boid.velocity) > velocity_limit):
-        boid.velocity = ((boid.velocity / abs(boid.velocity)) / velocity_limit)
+        boid.velocity = ((boid.velocity / abs(boid.velocity)) * velocity_limit)
 
 def get_goals_vector(goals, boid):
     # generate a vector that moves the boid towards the goals
