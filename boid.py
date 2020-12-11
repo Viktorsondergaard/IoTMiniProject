@@ -37,7 +37,7 @@ class boid:
         glPushMatrix()
         # apply the transformation for the boid
         glTranslatef(self.position.x, self.position.y, 0.0)
-
+        glRotatef(math.degrees(math.atan2(self.velocity.x , self.velocity.y)), 0.0, 0.0, -1.0)
         # render the boid itself
         self.render_boid()
         glPopMatrix()
@@ -104,8 +104,8 @@ def move_all_boids_to_new_positions(boids, number):
         v2 = rule2(b)
         v3 = rule3(b)
         v4 = bound_position(b)
-        v5 = tend_to_position(b, number)        
-        b.velocity = b.velocity + v1 + v2 + v3 + v4 + v5
+        #v5 = tend_to_position(b, number)        
+        b.velocity = b.velocity + v1 + v2 + v3 + v4 #+ v5
         limit_velority(b)
         b.position = b.position + b.velocity
         
