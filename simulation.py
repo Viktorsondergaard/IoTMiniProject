@@ -23,14 +23,14 @@ def run():
 
     fps_display = pyglet.window.FPSDisplay(window=window)
 
-    flock = [boid(random.randint(0, 640), random.randint(0, 360)) for _ in range(15)]
+    flock = [boid(random.randint(0, 640), random.randint(0, 360)) for _ in range(10)]
 
     def update(dt):
         global new_position_number
         move_all_boids_to_new_positions(dt, flock, goals, new_position_number)
         new_position_number += 1
 
-    pyglet.clock.schedule_interval(update, .05)
+    pyglet.clock.schedule_interval(update, .1)
     #pyglet.clock.schedule(update)
 
     @window.event
@@ -55,6 +55,8 @@ def run():
             matplotlib.pyplot.show() 
             pyglet.app.exit()
             self.close()
+        elif symbol == key.B:
+            flock.append(boid(random.randint(0, 640), random.randint(0, 360)))
     
     @window.event
     def on_mouse_drag(x, y, *args):
