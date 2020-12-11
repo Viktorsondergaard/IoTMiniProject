@@ -26,7 +26,7 @@ class boid:
         self.position = vector.Vector(x,y)
         vec = (np.random.rand(2) - 0.5)*5
         self.velocity = vector.Vector(*vec)
-        self.color = color
+        self.color = random.random(), random.random(), random.random()
         self.size = size
 
     def render_boid(self):
@@ -64,7 +64,7 @@ def separation(boid):
     displacement = vector.Vector(0,0)    
     for b in flock:
         if b != boid:
-            if ((abs(b.position - boid.position)) < 25):
+            if ((abs(b.position - boid.position)) < 30):
                 displacement = displacement - (b.position - boid.position)                 
     return displacement
 
