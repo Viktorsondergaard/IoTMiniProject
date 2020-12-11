@@ -8,12 +8,13 @@ from pyglet.gl import (
     GL_BLEND, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_COLOR_BUFFER_BIT)
 from pyglet.window import key
 from boid import *
-from simulation_world import *
+from goal import *
 
 def run():
     boids = []
+    goals = []
     mouse_location = (0, 0)
-    window = pyglet.window.Window(1000, 1000,
+    window = pyglet.window.Window(800, 640,
         fullscreen=False,
         caption="IoT Boids Simulation")
 
@@ -22,11 +23,11 @@ def run():
 
     fps_display = pyglet.window.FPSDisplay(window=window)
 
-    flock = [boid(random.randint(0, 640), random.randint(0, 360)) for _ in range(10)]
+    flock = [boid(random.randint(0, 640), random.randint(0, 360)) for _ in range(15)]
 
     def update(dt):
         global new_position_number
-        move_all_boids_to_new_positions(flock, new_position_number)
+        move_all_boids_to_new_positions(dt, flock, goals, new_position_number)
         new_position_number += 1
 
     pyglet.clock.schedule_interval(update, .05)
@@ -40,15 +41,30 @@ def run():
 
         for boid in flock:
             boid.draw()
+        
+        for goal in goals:
+            goal.draw()
 
     @window.event
     def on_key_press(symbol, modifiers):
-        if symbol == key.Q:
+        if symbol == key.G:
+            goals.append(Goal(position=mouse_location))
+
+        elif symbol == key.Q:
             sns.lineplot(x=np.arange(0,len(fps)), y=fps)
             matplotlib.pyplot.show() 
             pyglet.app.exit()
             self.close()
     
+    @window.event
+    def on_mouse_drag(x, y, *args):
+        nonlocal mouse_location
+        mouse_location = x, y
+
+    @window.event
+    def on_mouse_motion(x, y, *args):
+        nonlocal mouse_location
+        mouse_location = x, y
 
     pyglet.app.run()
 

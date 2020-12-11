@@ -15,6 +15,10 @@ from pyglet.gl import (
     glVertex2f, glTranslatef, glRotatef,
     GL_LINE_LOOP, GL_LINES, GL_TRIANGLES)
 
+
+_GOALS_FACTOR = 0.005
+_MAX_COLLISION_VELOCITY = 1.0
+
 class boid:
     
     def __init__(self, x, y, size=5, color=[1.0, 1.0, 1.0]):
@@ -77,13 +81,13 @@ def bound_position(boid):
     V = vector.Vector(0,0)
     if boid.position.x < 0:
         V.x = 10
-    elif boid.position.x > 1000:
+    elif boid.position.x > 790:
         V.x = -10
         
     if boid.position.y < -0:
         V.y = 10        
-    elif boid.position.y > 1000:
-        V.y = -10 
+    elif boid.position.y > 630:
+        V.y = -10   
     return V
     
 def tend_to_position(boid,number): 
@@ -96,19 +100,38 @@ def limit_velority(boid):
     velocity_limit = 25
     if (abs(boid.velocity) > velocity_limit):
         boid.velocity = ((boid.velocity / abs(boid.velocity)) / velocity_limit)
+
+def get_goals_vector(goals, boid):
+    # generate a vector that moves the boid towards the goals
+        a = vector.Vector(0,0)
+        if not goals:
+            return a
+
+        for goal in goals:
+            a.x += goal.position[0] - boid.position.x
+            a.y += goal.position[1] - boid.position.y
         
-                
-def move_all_boids_to_new_positions(boids, number):    
+        return a    
+
+def avoid_collisions(objs, collision_distance):
+    print("test")
+
+def move_all_boids_to_new_positions(dt, boids, goals, number):    
     for b in boids:
         v1 = rule1(b)
         v2 = rule2(b)
         v3 = rule3(b)
         v4 = bound_position(b)
-        #v5 = tend_to_position(b, number)        
+        #v5 = tend_to_position(b, number)
+        goals_vector = get_goals_vector(goals, b)
+
         b.velocity = b.velocity + v1 + v2 + v3 + v4 #+ v5
+        b.velocity += goals_vector * _GOALS_FACTOR
+
         limit_velority(b)
+
         b.position = b.position + b.velocity
-        
+    
 def draw_boids(boids):
     list_of_boid_x, list_of_boid_y = [], []
     axes = plt.gca()
@@ -130,7 +153,7 @@ x = 0
 number = 500
 
 while x < number:
-    move_all_boids_to_new_positions(flock, x)
+    #move_all_boids_to_new_positions(flock, x)
     x += 1
     #draw_boids(flock)
     
