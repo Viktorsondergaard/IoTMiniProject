@@ -10,6 +10,7 @@ import vector
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import random
 from pyglet.gl import (
     glPushMatrix, glPopMatrix, glBegin, glEnd, glColor3f,
     glVertex2f, glTranslatef, glRotatef,
@@ -46,36 +47,37 @@ class boid:
         self.render_boid()
         glPopMatrix()
 
-# http://www.vergenet.net/~conrad/boids/pseudocode.html              
-def rule1(boid):    
-    pcj = vector.Vector(0,0)
-    N = 0
+# http://www.vergenet.net/~conrad/boids/pseudocode.html
+              
+def cohesion(boid):    
+    perceived_centre = vector.Vector(0,0)
+    number_in_flock = 0
     for b in flock:
-        N += 1
+        number_in_flock += 1
         if b != boid:
-            pcj = pcj + boid.position
-    pcj = (pcj / (N-1))
+            perceived_centre = perceived_centre + boid.position
+    perceived_centre = (perceived_centre / (number_in_flock-1))
     
-    return ((pcj-boid.position) / 100)
+    return ((perceived_centre-boid.position) / 100)
 
-def rule2(boid):    
-    c = vector.Vector(0,0)    
+def separation(boid):    
+    displacement = vector.Vector(0,0)    
     for b in flock:
         if b != boid:
-            if ((abs(b.position - boid.position)) < 10):
-                c = c - (b.position - boid.position)                 
-    return c
+            if ((abs(b.position - boid.position)) < 25):
+                displacement = displacement - (b.position - boid.position)                 
+    return displacement
 
-def rule3(boid):
-    pvj = vector.Vector(0,0)
-    N = 0
+def alignment(boid):
+    perceived_velority = vector.Vector(0,0)
+    number_in_flock = 0
     for b in flock:
-        N += 1
+        number_in_flock += 1
         if b != boid:
-            pvj = pvj + b.velocity
+            perceived_velority = perceived_velority + b.velocity
             
-    pvj = (pvj / (N-1))
-    return ((pvj - boid.velocity) / 8)    
+    perceived_velority = (perceived_velority / (number_in_flock-1))
+    return ((perceived_velority - boid.velocity) / 8)    
 
 def bound_position(boid):
     V = vector.Vector(0,0)
@@ -84,7 +86,7 @@ def bound_position(boid):
     elif boid.position.x > 790:
         V.x = -10
         
-    if boid.position.y < -0:
+    if boid.position.y < 0:
         V.y = 10        
     elif boid.position.y > 630:
         V.y = -10   
@@ -118,9 +120,9 @@ def avoid_collisions(objs, collision_distance):
 
 def move_all_boids_to_new_positions(dt, boids, goals, number):    
     for b in boids:
-        v1 = rule1(b)
-        v2 = rule2(b)
-        v3 = rule3(b)
+        v1 = cohesion(b)
+        v2 = separation(b)
+        v3 = alignment(b) 
         v4 = bound_position(b)
         #v5 = tend_to_position(b, number)
         goals_vector = get_goals_vector(goals, b)
@@ -142,10 +144,9 @@ def draw_boids(boids):
         list_of_boid_y.append(boid.position.y)
 
     plt.scatter(list_of_boid_x, list_of_boid_y)
+    plt.title('After k: ' + str(number) + ' iterations')
     plt.pause(0.1)
     plt.show()
-
-import random
 
 flock = [boid(random.randint(0,640), random.randint(0,360)) for _ in range(10)]
 
