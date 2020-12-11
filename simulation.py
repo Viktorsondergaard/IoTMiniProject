@@ -26,11 +26,9 @@ def run():
     flock = [boid(random.randint(0, 640), random.randint(0, 360)) for _ in range(10)]
 
     def update(dt):
-        global new_position_number
-        move_all_boids_to_new_positions(dt, flock, goals, new_position_number)
-        new_position_number += 1
+        move_all_boids_to_new_positions(dt, flock, goals)
 
-    pyglet.clock.schedule_interval(update, .1)
+    pyglet.clock.schedule_interval(update, .001)
     #pyglet.clock.schedule(update)
 
     @window.event

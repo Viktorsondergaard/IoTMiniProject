@@ -49,10 +49,10 @@ class boid:
 
 # http://www.vergenet.net/~conrad/boids/pseudocode.html
               
-def cohesion(boid, flock):    
+def cohesion(boid, all_boids):    
     perceived_centre = vector.Vector(0,0)
     number_in_flock = 0
-    for b in flock:
+    for b in all_boids:
         number_in_flock += 1
         if b != boid:
             perceived_centre = perceived_centre + boid.position
@@ -60,18 +60,18 @@ def cohesion(boid, flock):
     
     return ((perceived_centre-boid.position) / 100)
 
-def separation(boid, flock):    
+def separation(boid, all_boids):    
     displacement = vector.Vector(0,0)    
-    for b in flock:
+    for b in all_boids:
         if b != boid:
-            if ((abs(b.position - boid.position)) < 30):
+            if ((abs(b.position - boid.position)) < 15):
                 displacement = displacement - (b.position - boid.position)                 
     return displacement
 
-def alignment(boid, flock):
+def alignment(boid, all_boids):
     perceived_velority = vector.Vector(0,0)
     number_in_flock = 0
-    for b in flock:
+    for b in all_boids:
         number_in_flock += 1
         if b != boid:
             perceived_velority = perceived_velority + b.velocity
@@ -119,7 +119,7 @@ def get_goals_vector(goals, boid):
 def avoid_collisions(objs, collision_distance):
     print("test")
 
-def move_all_boids_to_new_positions(dt, flock, goals, number):    
+def move_all_boids_to_new_positions(dt, flock, goals):
     for b in flock:
         v1 = cohesion(b, flock)
         v2 = separation(b, flock)
@@ -128,7 +128,7 @@ def move_all_boids_to_new_positions(dt, flock, goals, number):
         #v5 = tend_to_position(b, number)
         gv = get_goals_vector(goals, b) * _GOALS_FACTOR
 
-        b.velocity = b.velocity + v1 + v2 + v3 + v4 #+ gv # + v5
+        b.velocity = b.velocity + v1 + v2 + v3 + v4 + gv # + v5
 
         #b.velocity += gv * _GOALS_FACTOR
 
