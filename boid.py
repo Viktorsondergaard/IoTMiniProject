@@ -11,7 +11,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class boid:
-    
     def __init__(self, x, y):
         self.position = vector.Vector(x,y)
         vec = (np.random.rand(2) - 0.5)*5
@@ -69,9 +68,9 @@ def tend_to_position(boid,number):
     return ((place - boid.position) / 100)   
 
 def limit_velority(boid):
-    velocity_limit = 25
+    velocity_limit = 10
     if (abs(boid.velocity) > velocity_limit):
-        boid.velocity = ((boid.velocity / abs(boid.velocity)) / velocity_limit)
+        boid.velocity = ((boid.velocity / abs(boid.velocity)) * velocity_limit)
         
                 
 def move_all_boids_to_new_positions(boids, number):  
