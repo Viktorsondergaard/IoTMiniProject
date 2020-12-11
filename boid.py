@@ -17,7 +17,7 @@ from pyglet.gl import (
     GL_LINE_LOOP, GL_LINES, GL_TRIANGLES)
 
 
-_GOALS_FACTOR = 0.005
+_GOALS_FACTOR = 0.002
 _MAX_COLLISION_VELOCITY = 1.0
 
 class boid:
@@ -49,7 +49,7 @@ class boid:
 
 # http://www.vergenet.net/~conrad/boids/pseudocode.html
               
-def cohesion(boid):    
+def cohesion(boid, flock):    
     perceived_centre = vector.Vector(0,0)
     number_in_flock = 0
     for b in flock:
@@ -60,7 +60,7 @@ def cohesion(boid):
     
     return ((perceived_centre-boid.position) / 100)
 
-def separation(boid):    
+def separation(boid, flock):    
     displacement = vector.Vector(0,0)    
     for b in flock:
         if b != boid:
@@ -68,7 +68,7 @@ def separation(boid):
                 displacement = displacement - (b.position - boid.position)                 
     return displacement
 
-def alignment(boid):
+def alignment(boid, flock):
     perceived_velority = vector.Vector(0,0)
     number_in_flock = 0
     for b in flock:
@@ -109,6 +109,7 @@ def get_goals_vector(goals, boid):
         if not goals:
             return a
 
+
         for goal in goals:
             a.x += goal.position[0] - boid.position.x
             a.y += goal.position[1] - boid.position.y
@@ -118,17 +119,18 @@ def get_goals_vector(goals, boid):
 def avoid_collisions(objs, collision_distance):
     print("test")
 
-def move_all_boids_to_new_positions(dt, boids, goals, number):    
-    for b in boids:
-        v1 = cohesion(b)
-        v2 = separation(b)
-        v3 = alignment(b) 
+def move_all_boids_to_new_positions(dt, flock, goals, number):    
+    for b in flock:
+        v1 = cohesion(b, flock)
+        v2 = separation(b, flock)
+        v3 = alignment(b, flock) 
         v4 = bound_position(b)
         #v5 = tend_to_position(b, number)
-        goals_vector = get_goals_vector(goals, b)
+        gv = get_goals_vector(goals, b) * _GOALS_FACTOR
 
-        b.velocity = b.velocity + v1 + v2 + v3 + v4 #+ v5
-        b.velocity += goals_vector * _GOALS_FACTOR
+        b.velocity = b.velocity + v1 + v2 + v3 + v4 #+ gv # + v5
+
+        #b.velocity += gv * _GOALS_FACTOR
 
         limit_velority(b)
 
@@ -148,7 +150,7 @@ def draw_boids(boids):
     plt.pause(0.1)
     plt.show()
 
-flock = [boid(random.randint(0,640), random.randint(0,360)) for _ in range(10)]
+#flock = [boid(random.randint(0,640), random.randint(0,360)) for _ in range(10)]
 
 x = 0
 number = 500
