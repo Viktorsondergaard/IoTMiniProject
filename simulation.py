@@ -11,33 +11,6 @@ from boid import *
 from simulation_world import *
 
 
-#Config
-numBoids = 50
-walls = 1 # 0 = no walls, 1 = walls
-
-
-#rangeClustering = 2 # 0=none, 1=DBSCAN, 2=Tiling, 3=DBSCAN w/ Tiling
-#reclusterNum = 20
-#tileWidth = 40
-#clusterIndicators = 0 #0 = no indicator, 1 = indicators
-
-boidRange = 40 ** 2
-boidCollisionRange = 14 ** 2
-boidCollisionWeight = 4
-boidVelMatchingWeight = 0.5
-boidFlockCenteringWeight = 0.3
-boidWallRange = 60
-boidwalAvoidWeight = 5000
-boidMinSpeed = 45
-boidMaxSpeed = 60
-boidSize = 6
-boidViewAngle = 290 * (math.pi/180)
-
-
-boidConfig = [boidRange, boidCollisionRange, boidCollisionWeight, boidVelMatchingWeight, boidFlockCenteringWeight, boidwalAvoidWeight, boidMinSpeed, boidMaxSpeed, boidSize, boidViewAngle, walls, boidWallRange]
-#640, 360
-#world = World(640, 360, numBoids, boidConfig)
-
 window = pyglet.window.Window(640, 360,
     fullscreen=False,
     caption="IoT Boids Simulation")
@@ -47,9 +20,14 @@ glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 fps_display = pyglet.window.FPSDisplay(window=window)
 
+flock = [boid(random.randint(0,640), random.randint(0,360)) for _ in range(10)]
+
 """ def update(dt):
     world.updateLocalBoids()
     world.updateBoidPos(1/15) """
+
+def update(dt):
+    boid.move_all_boids_to_new_positions()
 
 # schedule world updates as often as possible
 #pyglet.clock.schedule(update)
@@ -69,11 +47,18 @@ def on_draw():
         batch.add(3, pyglet.gl.GL_TRIANGLES, None, ('v2f', (vl[i][0], vl[i][1], vl[i][2], vl[i][3], vl[i][4], vl[i][5])), ('c3B', (cl[i][0], cl[i][1], cl[i][2], cl[i][0], cl[i][1], cl[i][2], cl[i][0], cl[i][1], cl[i][2])))
      """
 
+    for boid in flock:
+        boid.draw()
+        #batch.add(1, pyglet.gl.GL_TRAINGLES, None, ('v2f', (0.0, 1.0, 1.0, 0.0)),('c4B', (255, 255, 255, 255) * 2))
+        #boid.position.x
+        #boid.position.y
+
+    
     #batch.add(1, pyglet.gl.GL_TRIANGLES, None, ('v2f', (0.0, 1.0, 1.0, 0.0)),('c4B', (255, 255, 255, 255) * 2))
-    batch.add(1, pyglet.gl.GL_LINES, None, # <---- add None
-        ('v2f', (100,100,250,250)),
-        ('c3B', (255,0,0) * 2)
-    )
+    """ batch.add(1, pyglet.gl.GL_TRIANGLES, None, # <---- add None
+        ('v2f', (0,0, 400,50, 200,300)),
+        ('c3B', (255,0,0) * 3)
+    ) """
     batch.draw()
 
 @window.event

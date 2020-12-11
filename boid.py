@@ -9,13 +9,38 @@ Created on Mon Nov 30 10:26:59 2020
 import vector
 import numpy as np
 import matplotlib.pyplot as plt
+import math
+from pyglet.gl import (
+    glPushMatrix, glPopMatrix, glBegin, glEnd, glColor3f,
+    glVertex2f, glTranslatef, glRotatef,
+    GL_LINE_LOOP, GL_LINES, GL_TRIANGLES)
 
 class boid:
     
-    def __init__(self, x, y):
+    def __init__(self, x, y, size=5, color=[1.0, 1.0, 1.0]):
         self.position = vector.Vector(x,y)
         vec = (np.random.rand(2) - 0.5)*5
         self.velocity = vector.Vector(*vec)
+        self.color = color
+        self.size = size
+
+    def render_boid(self):
+        glBegin(GL_TRIANGLES)
+        glColor3f(*self.color)
+        glVertex2f(-(self.size), 0.0)
+        glVertex2f(self.size, 0.0)
+        glVertex2f(0.0, self.size * 3.0)
+        glEnd()
+
+    
+    def draw(self):
+        glPushMatrix()
+        # apply the transformation for the boid
+        glTranslatef(self.position.x, self.position.y, 0.0)
+
+        # render the boid itself
+        self.render_boid()
+        glPopMatrix()
 
 # http://www.vergenet.net/~conrad/boids/pseudocode.html              
 def rule1(boid):    
